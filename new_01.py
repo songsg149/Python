@@ -4,7 +4,7 @@ import time
 import os
 import pandas as pd
 
-LOG_FOLDER = r'..\test\log'
+LOG_FOLDER = r'log'
 TIMEOUT = 60
 
 def create_log_folder(log_folder):

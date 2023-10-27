@@ -2,7 +2,7 @@ import requests
 from datetime import datetime, timedelta
 import os
 
-LOG_FOLDER = r'..\test\log'
+LOG_FOLDER = r'log' # 현재 위치 폴더에 로그폴더를 생성하기
 TIMEOUT = timedelta(seconds=60)
 
 def create_log_folder(log_folder):
@@ -38,11 +38,11 @@ for url in urls:
     log_file_path = os.path.join(LOG_FOLDER, log_file_name)
 
     if status is True:
-        message = f"Website {url} 테스트 성공. 지연: {delay:.4f} 초\n"
+        message = f"{url} 테스트 성공. 지연: {delay:.4f} 초\n"
     elif delay is None:
-        message = f"Website {url} 에러: {TIMEOUT.total_seconds()} 초 후 타임아웃\n"
+        message = f"{url} 에러: {TIMEOUT.total_seconds()} 초 후 타임아웃\n"
     else:
-        message = f"Website {url} 다운됨. 응답 코드: {delay}\n"
+        message = f"{url} 다운됨. 응답 코드: {delay}\n"
 
     create_log_folder(LOG_FOLDER)
     write_to_log(log_file_path, message)
