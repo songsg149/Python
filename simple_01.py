@@ -9,16 +9,20 @@ TIMEOUT = timedelta(seconds=60)
 def create_log_folder(log_folder):
     os.makedirs(log_folder, exist_ok=True)
 
+
 def write_to_log(log_file_path, message):
     # 여기에서 로그 메시지를 엑셀 파일로 저장
     if not os.path.exists(log_file_path):
         df = pd.DataFrame(columns=['Timestamp', 'URL', 'Status', 'Delay'])
         df.to_excel(log_file_path, index=False)
 
-    timestamp = datetime.now().strftime("%m-%d %H:%M")
+    timestamp = datetime.now().strftime("%m-%d %H:%M:%S")
     log_data = {'Timestamp': timestamp, 'URL': url, 'Status': status, 'Delay': delay}
-    df = pd.read_excel(log_file_path)
-    df = pd.concat([df, pd.DataFrame([log_data])], ignore_index=True)
+
+    # Suppress the future warning for DataFrame concatenation
+    with pd.option_context('mode.chained_assignment', None):
+        df = pd.concat([df, pd.DataFrame([log_data])], ignore_index=True)
+
     df.to_excel(log_file_path, index=False)
 
 def website_health_check(url):
