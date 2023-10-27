@@ -15,7 +15,7 @@ def write_to_log(log_file_path, message):
         df = pd.DataFrame(columns=['Timestamp', 'URL', 'Status', 'Delay'])
         df.to_excel(log_file_path, index=False)
 
-    timestamp = datetime.now().strftime("%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%m-%d %H:%M")
     log_data = {'Timestamp': timestamp, 'URL': url, 'Status': status, 'Delay': delay}
     df = pd.read_excel(log_file_path)
     df = pd.concat([df, pd.DataFrame([log_data])], ignore_index=True)
@@ -37,8 +37,9 @@ def website_access_delay(url, timeout):
             return True, (end_time - start_time).total_seconds()
     return False, None
 
-with open("urls.txt", "r") as file:
-    urls = file.read().splitlines()
+excel_file = 'urls.xlsx'
+df = pd.read_excel(excel_file)
+urls = df['url'].tolist()
 
 for url in urls:
     status, delay = website_access_delay(url, TIMEOUT)
