@@ -12,6 +12,7 @@
 
 playwright, traceback, requests, os, pandas, datetime, re
 
+
 ### 웹사이트 모니터링 과정
 
 다수의 사이트를 접속하여 사이트의 접속 여부와 사이트 내의 이미지 및 각각의 심볼들이 정상적으로 보이는지 확인
