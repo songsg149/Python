@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Website Status Check</title>
+  <style>
+    body { font-family: Arial; padding: 40px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .success { color: green; font-weight: bold; }
+    .failure { color: red; font-weight: bold; }
+    .checking { color: orange; font-style: italic; }
+    button { padding: 4px 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h2>Website Monitoring</h2>
+  <table id="websiteTable">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Move</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <script>
+    const websites = [
+    "http://10.122.16.196:5001/invoke/OP_Admin:Conn_test",
+    "http://10.122.16.196:5002/invoke/OP_Admin:Conn_test",
+    "http://10.122.16.196:5003/invoke/OP_Admin:Conn_test",
+    "http://10.122.16.90:5001/invoke/OP_Admin:Conn_test",
+    "http://10.122.16.90:5002/invoke/OP_Admin:Conn_test",
+    "http://10.122.16.90:5003/invoke/OP_Admin:Conn_test",
+    "http://10.122.23.31:15301/",
+    "http://10.122.23.31:15302/",
+    "http://10.122.23.32:15301/",
+    "http://10.122.23.32:15302/",
+    "http://10.122.46.43:5101/ws/AdminTool.connection.utils:WS_connCheck/AdminTool_connection_utils_WS_connCheck_Port",
+    "http://10.122.46.43:5102/ws/AdminTool.connection.utils:WS_connCheck/AdminTool_connection_utils_WS_connCheck_Port",
+    "http://10.122.23.31:15201/",
+    "http://10.122.23.31:15202/",
+    "http://10.122.23.32:15201/",
+    "http://10.122.23.32:15202/",
+    "http://10.122.46.41:5400/",
+    "http://10.122.46.42:5400/",
+    "http://10.122.23.31:15401/",
+    "http://10.122.23.31:15402/",
+    "http://10.122.23.32:15401/",
+    "http://10.122.23.32:15402/",
+    "http://10.122.23.33:15401/",
+    "http://10.122.23.33:15402/",
+    "http://kme.kia-mis.prd:50000/irj/portal",
+    "https://www.kmsportal.com:50001/irj/portal",
+    "https://hap.haos.com.tr/irj/portal",
+    "https://www.hmmcportal.cz/irj/portal",
+    "https://jira.hyundai-autoever.eu/secure/Dashboard.jspa",
+    "https://confluence.hyundai-autoever.eu/login.action?os_destination=%2F",
+    "https://crowd.hyundai-autoever.eu/console/login.action#/",
+    "https://aps2.eu.hmckmc.co.kr/apsII/signon.jsp",
+    "https://ems.kia.europe-crm.net:8443/",
+    "https://ems.hyundai.europe-crm.net:8443/",
+    "https://gtms.glovis.eu/il5/",
+    "https://gcs.glovis.com.tr/",
+    "https://10.122.45.3/login",
+    "http://elis.glovis.com.tr/htdocs/C/CLIN/cmnLogin.jsp",
+    "https://10.122.51.53/login/loginfrm.asp",
+    "https://hr-eu.kia.eucorp.local:50001/irj/portal",
+    "https://hr-eu.hyundai.eucorp.local:50001/irj/portal",
+    "https://hr-kia.hkmr.local:50001/irj/portal",
+    "https://hr-hyundai.hkmr.local:50001/irj/portal",
+    "https://10.115.193.236/ui/login?redirect=%2Fconfiguration%2Fconfiguration-options",
+    "https://10.115.193.222/ui/login?redirect=%2Fconfiguration%2Fconfiguration-options",
+    "https://hmuk.europe-crm.net/",
+    "https://autoway.hyundai-global.net/",
+    "https://hmd.wa.hyundai-europe.com/Login.aspx?ReturnUrl=/default.aspx",
+    "https://dih.hyundai-europe.com:8443/loginForm.do",
+    "https://myconnect.kia-europe.com:8443/loginForm.do",
+    "https://www.mykia.de/",
+    "https://eu-account.kia.com/auth/realms/eukiaidm/account/",
+    "https://accounts-eu.genesis.com/realms/eugenesisidm/account",
+    "https://eu-account.hyundai.com/auth/realms/euhyundaiidm/account/",
+    "https://eu-autoever.hyundai.eucorp.local:50101/irj/portal",
+    "http://10.122.27.20:4503/crx/de/index.jsp",
+    "http://10.122.27.21:4503/crx/de/index.jsp",
+    "http://10.122.27.22:4503/crx/de/index.jsp",
+    "http://10.122.27.23:4502/crx/de/index.jsp",
+    "https://author-aem.hyundai.com/libs/granite/core/content/login.html?resource=%2Faem%2Fstart.html&$$login$$=%24%24login%24%24&j_reason=unknown&j_reason_code=unknown",
+    "http://10.122.46.75/content/hyundai/fr/fr.html",
+    "http://10.122.46.76/content/hyundai/fr/fr.html",
+    "http://10.122.46.77/content/hyundai/fr/fr.html",
+    "https://aem.hyundai.com/eu.html",
+    "https://org-eu-www.hyundai.com/eu.html",
+    "https://www.hyundai.com/be/fr.html",
+    "https://www.hyundai.com/be/nl.html",
+    "https://www.hyundai.com/ch/de.html",
+    "https://www.hyundai.com/ch/de/modelle/kona-electric/konfigurator.html#/trims",
+    "https://www.hyundai.com/ch/de/vertriebsnetz-schweiz.html",
+    "https://www.hyundai.com/ch/fr.html",
+    "https://www.hyundai.com/ch/fr/modeles/kona-electric/configurator.html#/trims",
+    "https://www.hyundai.com/ch/fr/reseau-suisse.html",
+    "https://www.hyundai.com/ch/it.html",
+    "https://www.hyundai.com/ch/it/modelli/kona-electric/konfigurator.html#/trims",
+    "https://www.hyundai.com/ch/it/rete-svizzera.html",
+    "https://www.hyundai.com/cz/cz.html",
+    "https://www.hyundai.com/cz/modely.html",
+    "https://www.hyundai.com/cz/modely/bayon/konfigurator.html#/trims",
+    "https://www.hyundai.com/de/de.html",
+    "https://www.hyundai.com/de/de/beratung-kauf/entdecken-und-erwerben/angebot.html",
+    "https://www.hyundai.com/de/de/beratung-kauf/entdecken-und-erwerben/haendlersuche.html",
+    "https://www.hyundai.com/de/de/beratung-kauf/entdecken-und-erwerben/probefahrt.html",
+    "https://www.hyundai.com/de/de/hyundai-welt/sponsoring-und-events/eintracht.html",
+    "https://www.hyundai.com/de/de/hyundai-welt/sponsoring-und-events/eintracht/sge-moments.html",
+    "https://www.hyundai.com/de/de/konfigurator/",
+    "https://www.hyundai.com/de/de/modelle.html",
+    "https://www.hyundai.com/de/de/newsletter.html",
+    "https://www.hyundai.com/es.html",
+    "https://www.hyundai.com/es/modelos/kona-electrico-2021/configuracion.html#/powertrain",
+    "https://www.hyundai.com/eu.html",
+    "https://www.hyundai.com/fr/fr.html",
+    "https://www.hyundai.com/fr/fr/modeles/ioniq6/configurateur.html#/trims",
+    "https://www.hyundai.com/it.html",
+    "https://www.hyundai.com/it/models/nuova-ioniq-5/configuratore.html#/trims",
+    "https://www.hyundai.com/lu.html",
+    "https://www.hyundai.com/nl/nl.html",
+    "https://www.hyundai.com/nl/nl/dealers.html",
+    "https://www.hyundai.com/nl/nl/modellen/kona-electric/configurator.html#/trims",
+    "https://www.hyundai.com/no/no.html",
+    "https://www.hyundai.com/pl/pl.html",
+    "https://www.hyundai.com/pl/pl/modele/ioniq5.html",
+    "https://www.hyundai.com/sk/sk.html",
+    "https://www.hyundai.com/sk/sk/predaj/kontakty/autorizovane-predajne.html",
+    "https://www.hyundai.com/sk/sk/predaj/predaj/konfigurator.html",
+    "https://www.hyundai.com/sk/sk/sluzby/online-sluzby/cenova-ponuka.html",
+    "https://www.hyundai.com/sk/sk/sluzby/online-sluzby/testovacia-jazda.html",
+    "https://www.hyundai.com/uk/en.html",
+    "https://www.hyundai.com/uk/en/choose-model.html",
+    "https://www.hyundai.com/uk/en/models/all-new-kona/configurator.html#/trims",
+    "https://www.hyundai.com/uk/en/models/all-new-kona-hybrid/configurator.html#/trims",
+    "https://www.hyundai.com/uk/en/models/ioniq5/configurator.html#/trims",
+    "https://www.hyundai.com/uk/en/models/ioniq6/configurator.html#/trims",
+    "https://www.hyundai.com/uk/en/models/kona-electric/configurator.html#/trims",
+    "https://www.hyundai.com/uk/en/offers/new-cars/model.html",
+    "https://www.hyundai.com/se/sv.html",
+    "https://www.hyundai.com/se/sv/tjanster/online-tjanster/provkorning.html",
+    "https://www.hyundai.com/se/sv/tjanster/kontakt/kontakt.html",
+    "https://www.hyundai.com/se/sv/tjanster/online-tjanster/begar-en-offert.html",
+    "https://www.hyundai.com/se/sv/kop/kop/konfigurator.html",
+    "https://www.hyundai.news/eu.html"
+    ];
+
+    const tableBody = document.getElementById("tableBody");
+    const rows = [];
+
+    websites.forEach(url => {
+      const row = document.createElement("tr");
+
+      const urlCell = document.createElement("td");
+      urlCell.textContent = url;
+
+      const buttonCell = document.createElement("td");
+      const button = document.createElement("button");
+      button.textContent = "GO";
+      button.onclick = () => window.open(url, "_blank");
+      buttonCell.appendChild(button);
+
+      const statusCell = document.createElement("td");
+      statusCell.textContent = "Checking...";
+      statusCell.className = "checking";
+
+      row.appendChild(urlCell);
+      row.appendChild(buttonCell);
+      row.appendChild(statusCell);
+      tableBody.appendChild(row);
+
+      rows.push({ row, statusCell, url });
+    });
+
+    // 상태 확인 및 정렬
+    rows.forEach(async ({ row, statusCell, url }) => {
+      try {
+        await fetch(url, { method: "HEAD", mode: "no-cors" });
+        statusCell.textContent = "Success";
+        statusCell.className = "success";
+      } catch (error) {
+        statusCell.textContent = "Failed";
+        statusCell.className = "failure";
+      }
+      sortRows();
+    });
+
+    function sortRows() {
+      const getStatusRank = (statusText) => {
+        if (statusText === "Failed") return 0;
+        if (statusText === "Checking...") return 1;
+        return 2;
+      };
+
+      const sorted = [...rows].sort((a, b) => {
+        return getStatusRank(a.statusCell.textContent) - getStatusRank(b.statusCell.textContent);
+      });
+
+      sorted.forEach(({ row }) => tableBody.appendChild(row));
+    }
+  </script>
+</body>
+</html>
